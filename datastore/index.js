@@ -8,9 +8,20 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  items[id] = text;
-  callback(null, { id, text });
+  // var id = counter.getNextUniqueId((err, id)=>{
+  // console.log('CALLBACK', callback);
+  // }
+  counter.getNextUniqueId((err, id) => {
+    var filename = `${exports.dataDir}/${id}.txt`;
+    fs.writeFile(filename, text, (err) => {
+      if (err) {
+        callback(err);
+      } else {
+        callback(null, {id, text});
+      }
+
+    });
+  });
 };
 
 exports.readAll = (callback) => {
@@ -53,6 +64,7 @@ exports.delete = (id, callback) => {
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
 
 exports.dataDir = path.join(__dirname, 'data');
+//'/Users/mango/work/hr-rpp36-cruddy-todo/datastore/data/00001
 
 exports.initialize = () => {
   if (!fs.existsSync(exports.dataDir)) {
