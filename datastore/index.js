@@ -58,12 +58,18 @@ exports.readOne = (id, callback) => {
 
 
 exports.update = (id, text, callback) => {
-  var item = items[id];
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
+  if (fs.existsSync(`${exports.dataDir}/${id}.txt`)) {
+    fs.writeFile(`${exports.dataDir}/${id}.txt`, text, (err) => {
+
+      if (err) {
+        callback(err);
+      } else {
+        callback(null, { id, text });
+      }
+    });
+
   } else {
-    items[id] = text;
-    callback(null, { id, text });
+    callback(new Error(`No item with id: ${id}`));
   }
 };
 
